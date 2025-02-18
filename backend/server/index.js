@@ -31,7 +31,7 @@ material, it should return the title and type.
 */
 app.get('/modules', async (req, res) => {
     try {
-        const modules = await Module.find().select('title subtitle materials.title materials.type');
+        const modules = await Module.find().select('title subtitle materials.title materials.type materials._id');
         res.json(modules);
     } catch (error) {
         res.status(500).json({ message: error.message });
