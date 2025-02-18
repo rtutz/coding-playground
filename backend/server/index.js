@@ -38,6 +38,26 @@ app.get('/modules', async (req, res) => {
     }
 });
 
+/*
+This endpoint gets the materials (only id, type and title) associated
+with a specific module
+*/
+app.get('/modules/:moduleId/materials', async (req, res) => {
+    try {
+        const moduleId = req.params.moduleId;
+        const module = await Module.findById(moduleId).select('materials.title materials.type materials._id');
+        
+        if (!module) {
+            return res.status(404).json({ message: 'Module not found' });
+        }
+        
+        res.json(module.materials);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 /* 
 This endpoint gets the module with the id defined in the param.
 It returns all the info and the materials needed for that module.
