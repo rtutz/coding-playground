@@ -1,22 +1,20 @@
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import React from "react";
+import ReactMarkdown from "react-markdown";
+import "./styling/preview.css";
 
 interface MarkdownPreviewProps {
-  content: string;
-  className?: string;
+    content: string;
 }
 
-const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({ content, className }) => {
-  return (
-    <div className={cn(
-      "w-full h-full overflow-auto p-4 bg-background text-foreground",
-      "prose prose-invert prose-sm sm:prose-base lg:prose-lg dark:prose-invert",
-      className
-    )}>
-      <ReactMarkdown>{content}</ReactMarkdown>
-    </div>
-  );
+const MarkdownPreview: React.FC<MarkdownPreviewProps> = ({ content }) => {
+    return (
+        <ScrollArea className="h-full w-full">
+            <div className="markdown-preview px-6">
+                <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+        </ScrollArea>
+    );
 };
 
 export default MarkdownPreview;
