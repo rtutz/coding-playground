@@ -32,18 +32,18 @@ const Lesson: React.FC<LessonProps> = ({ lessonId, moduleId }) => {
             <div className="w-1/2 h-full py-6 bg-background text-foreground">
                 <MarkdownPreview content={lessonData.content} />
             </div>
-    
+
             <div className="w-1/2 flex flex-col">
                 <div className="h-1/2">
                     <CodeEditor />
                 </div>
-    
+
                 <div className="h-1/2">
-                    <Terminal/>
+                    <Terminal />
                 </div>
             </div>
         </div>
     );
-}    
+};
 
 export default Lesson;

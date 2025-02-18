@@ -11,8 +11,8 @@ const Terminal: React.FC = () => {
 
     useEffect(() => {
         instance?.loadAddon(fitAddon);
-        const rows = Math.ceil((document.body.clientHeight / (16 * 2)));
-        const cols = Math.ceil((document.body.clientWidth / (8*2)));
+        const rows = Math.ceil(document.body.clientHeight / (16 * 2));
+        const cols = Math.ceil(document.body.clientWidth / (8 * 2));
         instance?.resize(cols, rows);
         console.log(rows, cols);
 

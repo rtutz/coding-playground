@@ -18,64 +18,69 @@ associated to this module.
     else, update URL to contain the ID of the first material. 
 */
 export default function Module() {
-  const navigate = useNavigate();
-  const { moduleId, materialId } = useParams<{
-    moduleId: string;
-    materialId?: string;
-  }>();
+    const navigate = useNavigate();
+    const { moduleId, materialId } = useParams<{
+        moduleId: string;
+        materialId?: string;
+    }>();
 
-  const {
-    data: materials,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["materials"],
-    queryFn: () =>
-      api
-        .get(`/modules/${moduleId}/materials`)
-        .then((response) => response.data),
-  }) as { data: Material[]; isLoading: boolean; error: unknown };
+    const {
+        data: materials,
+        isLoading,
+        error,
+    } = useQuery({
+        queryKey: ["materials"],
+        queryFn: () =>
+            api
+                .get(`/modules/${moduleId}/materials`)
+                .then((response) => response.data),
+    }) as { data: Material[]; isLoading: boolean; error: unknown };
 
-  useEffect(() => {
-    if (materials && materials.length > 0) {
-      if (!materialId || !materials.some((m) => m._id === materialId)) {
-        navigate(`/modules/${moduleId}/${materials[0]._id}`);
-      }
-    }
-  }, [materials, moduleId, materialId, navigate]);
-
-  // TODO: Make a separate component for these
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error...</div>;
-  if (!materials || materials.length == 0) return <div>No materials</div>;
-
-  const onMaterialChange = (materialId: string) => {
-    navigate(`/modules/${moduleId}/${materialId}`);
-  };
-
-  const currentMaterial = materials.find((m) => m._id === materialId);
-
-  if (!currentMaterial) return <div>Invalid material</div>;
-  return (
-    <div className="h-screen flex flex-col">
-      <ModuleDashboard
-        materials={materials}
-        currentMaterialId={materialId!}
-        onMaterialChange={onMaterialChange}
-      />
-      {(() => {
-        switch (currentMaterial?.type) {
-          case "lesson":
-            return <Lesson lessonId={currentMaterial._id} moduleId={moduleId!} />
-          case "problem":
-            return <div>Problem</div>;
-          case "quiz":
-            return <div>Quiz</div>;
-          default:
-            return <div>DEFAULT</div>;
+    useEffect(() => {
+        if (materials && materials.length > 0) {
+            if (!materialId || !materials.some((m) => m._id === materialId)) {
+                navigate(`/modules/${moduleId}/${materials[0]._id}`);
+            }
         }
-      })()}
-      {/* </div> */}
-    </div>
-  );
+    }, [materials, moduleId, materialId, navigate]);
+
+    // TODO: Make a separate component for these
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error...</div>;
+    if (!materials || materials.length == 0) return <div>No materials</div>;
+
+    const onMaterialChange = (materialId: string) => {
+        navigate(`/modules/${moduleId}/${materialId}`);
+    };
+
+    const currentMaterial = materials.find((m) => m._id === materialId);
+
+    if (!currentMaterial) return <div>Invalid material</div>;
+    return (
+        <div className="h-screen flex flex-col">
+            <ModuleDashboard
+                materials={materials}
+                currentMaterialId={materialId!}
+                onMaterialChange={onMaterialChange}
+            />
+            {(() => {
+                switch (currentMaterial?.type) {
+                    case "lesson":
+                        return (
+                            <Lesson
+                                lessonId={currentMaterial._id}
+                                moduleId={moduleId!}
+                            />
+                        );
+                    case "problem":
+                        return <div>Problem</div>;
+                    case "quiz":
+                        return <div>Quiz</div>;
+                    default:
+                        return <div>DEFAULT</div>;
+                }
+            })()}
+            {/* </div> */}
+        </div>
+    );
 }

@@ -13,15 +13,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 }) => {
     const [code, setCode] = useState(defaultValue);
     const handleRun = (codeToRun: string) => {
-      WSClient.getInstance().sendCode(codeToRun);
-  };
+        WSClient.getInstance().sendCode(codeToRun);
+    };
     return (
         <div className="w-full h-full border dark:border-gray-700 relative">
             <Editor
                 height="100%"
                 defaultLanguage="python"
                 value={code}
-                onChange={(value) => setCode(value || '')}
+                onChange={(value) => setCode(value || "")}
                 theme="vs-dark"
                 options={{
                     minimap: { enabled: false },

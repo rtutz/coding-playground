@@ -4,8 +4,8 @@ section should serve as the landing page.
 */
 export default function Landing() {
     return (
-      <>
-        <h1>Landing</h1>
-      </>
+        <>
+            <h1>Landing</h1>
+        </>
     );
-  }
+}

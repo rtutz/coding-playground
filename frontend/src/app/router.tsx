@@ -6,27 +6,27 @@ const ModulesPage = lazy(() => import("./routes/app/modules/modules.tsx"));
 const ModulePage = lazy(() => import("./routes/app/modules/module.tsx"));
 
 const router = createBrowserRouter([
-  {
-    /* A temporary fix as the landing page is nonexistent for MVP */
-    path: "/",
-    element: <Navigate to="/modules" replace />,
-  },
-  {
-    path: "/modules",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <ModulesPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: "/modules/:moduleId/:materialId?",
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <ModulePage />
-      </Suspense>
-    ),
-  },
+    {
+        /* A temporary fix as the landing page is nonexistent for MVP */
+        path: "/",
+        element: <Navigate to="/modules" replace />,
+    },
+    {
+        path: "/modules",
+        element: (
+            <Suspense fallback={<div>Loading...</div>}>
+                <ModulesPage />
+            </Suspense>
+        ),
+    },
+    {
+        path: "/modules/:moduleId/:materialId?",
+        element: (
+            <Suspense fallback={<div>Loading...</div>}>
+                <ModulePage />
+            </Suspense>
+        ),
+    },
 ]);
 
 export default router;
