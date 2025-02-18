@@ -57,6 +57,30 @@ app.get('/modules/:moduleId/materials', async (req, res) => {
     }
 });
 
+/*
+This endpoint gets the material with id <materialId> associated with <moduleId>
+*/
+app.get('/modules/:moduleId/materials/:materialId', async (req, res) => {
+    try {
+        const { moduleId, materialId } = req.params;
+        
+        const module = await Module.findById(moduleId);
+        
+        if (!module) {
+            return res.status(404).json({ message: 'Module not found' });
+        }
+        
+        const material = module.materials.id(materialId);
+        
+        if (!material) {
+            return res.status(404).json({ message: 'Material not found' });
+        }
+        
+        res.json(material);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 /* 
 This endpoint gets the module with the id defined in the param.
