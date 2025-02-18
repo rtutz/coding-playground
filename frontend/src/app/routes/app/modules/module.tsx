@@ -1,3 +1,4 @@
+import ModuleDashboard from "@/components/moduleDashboard";
 import { api } from "@/lib/api-client";
 import { Material } from "@/types/material";
 import { useQuery } from "@tanstack/react-query";
@@ -34,7 +35,7 @@ export default function Module() {
   useEffect(() => {
     if (materials && materials.length > 0) {
       if (!materialId || !materials.some(m => m._id === materialId)) {
-        navigate(`/modules/${moduleId}/${materials[0]._id}`, { replace: true });
+        navigate(`/modules/${moduleId}/${materials[0]._id}`);
       }
     }
   }, [materials, moduleId, materialId, navigate]);
@@ -52,18 +53,29 @@ export default function Module() {
       else, update URL to contain the ID of the first material. 
   */
 
+  const onMaterialChange = (materialId: string) => {
+    navigate(`/modules/${moduleId}/${materialId}`);
+  }
+
   const currentMaterial = materials.find((m) => m._id === materialId);
 
   if (!currentMaterial) return <div>Invalid material</div>;
-
-  switch (currentMaterial?.type) {
-    case "lesson":
-      return <div>Lesson</div>;
-    case "problem":
-      return <div>Problem</div>;
-    case "quiz":
-      return <div>Quiz</div>;
-    default:
-      return <div>DEFAULT</div>;
-  }
+  return (
+    <>
+      <ModuleDashboard materials={materials} currentMaterialId={materialId!} onMaterialChange={onMaterialChange}/>
+      {(() => {
+        switch (currentMaterial?.type) {
+          case "lesson":
+            return <div>Lesson</div>;
+          case "problem":
+            return <div>Problem</div>;
+          case "quiz":
+            return <div>Quiz</div>;
+          default:
+            return <div>DEFAULT</div>;
+        }
+      })()}
+    </>
+  );
+  
 }
