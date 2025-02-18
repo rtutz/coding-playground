@@ -7,5 +7,6 @@ interface Option {
 
 export interface Quiz extends Material {
   type: 'quiz';
+  content: string;
   options: Option[];
 }

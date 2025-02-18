@@ -7,5 +7,6 @@ interface TestCase {
 
 export interface Problem extends Material {
   type: 'problem';
+  content: string;
   testCases?: TestCase[];
 }

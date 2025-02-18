@@ -3,18 +3,20 @@ import { CheckCircleIcon, CircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface MaterialItemProps {
+  moduleId: string;
   material: Material;
   isDone: boolean;
 }
 
 export const MaterialItem: React.FC<MaterialItemProps> = ({
+  moduleId,
   material,
   isDone,
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`${window.location.pathname}/${material._id}`);
+    navigate(`/modules/${moduleId}/${material._id}`);
   };
 
   return (

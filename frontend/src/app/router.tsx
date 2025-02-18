@@ -1,18 +1,18 @@
-import { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 // const LandingPage = lazy(() => import('./routes/landing.tsx'));
-const ModulesPage = lazy(() => import('./routes/app/modules/modules.tsx'));
-const ModulePage = lazy(() => import('./routes/app/modules/module.tsx'));
+const ModulesPage = lazy(() => import("./routes/app/modules/modules.tsx"));
+const ModulePage = lazy(() => import("./routes/app/modules/module.tsx"));
 
 const router = createBrowserRouter([
   {
     /* A temporary fix as the landing page is nonexistent for MVP */
-    path: '/',
-    element: <Navigate to="/modules" replace /> 
+    path: "/",
+    element: <Navigate to="/modules" replace />,
   },
   {
-    path: '/modules',
+    path: "/modules",
     element: (
       <Suspense fallback={<div>Loading...</div>}>
         <ModulesPage />
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/modules/:moduleId',
+    path: "/modules/:moduleId/:materialId?",
     element: (
       <Suspense fallback={<div>Loading...</div>}>
         <ModulePage />
