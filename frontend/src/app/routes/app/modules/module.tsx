@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Lesson from "@/features/lesson/components/lessonUI";
 import Problem from "@/features/problem/components/problemUI";
 import { Quiz } from "@/features/quiz/components/quizUI";
+import { Loader } from "@/components/loader";
 
 /* 
 Displays a specific module to the user. This module
@@ -47,7 +48,7 @@ export default function Module() {
     }, [materials, moduleId, materialId, navigate]);
 
     // TODO: Make a separate component for these
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <Loader/>;
     if (error) return <div>Error...</div>;
     if (!materials || materials.length == 0) return <div>No materials</div>;
 

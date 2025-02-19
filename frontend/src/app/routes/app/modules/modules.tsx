@@ -2,6 +2,8 @@ import { api } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { Module } from "@/features/modules/types/module";
 import { ModuleCard } from "@/features/modules/components/moduleCard";
+import { Loader } from "@/components/loader";
+
 /* 
 Displays all the modules in the app. A user should
 be able to click on a specific module and get rerouted 
@@ -17,7 +19,7 @@ export default function Modules() {
         queryFn: () => api.get("/modules").then((response) => response.data),
     }) as { data: Module[]; isLoading: boolean; error: unknown };
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <Loader />;
     if (error) return <div>An error occurred: {(error as Error).message}</div>;
 
     return (

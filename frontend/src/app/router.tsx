@@ -1,3 +1,4 @@
+import { Loader } from "@/components/loader.tsx";
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
     {
         path: "/modules",
         element: (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loader/>}>
                 <ModulesPage />
             </Suspense>
         ),
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
     {
         path: "/modules/:moduleId/:materialId?",
         element: (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loader/>}>
                 <ModulePage />
             </Suspense>
         ),

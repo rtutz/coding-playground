@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Quiz as quizType, Option as optionType } from "@/features/quiz/types/quiz";
 import { api } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
+import { Loader } from "@/components/loader";
 
 interface QuizProps {
     lessonId: string;
@@ -28,7 +29,7 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <Loader/>;
     if (error) return <div>Error...</div>;
 
     const handleOptionChange = (value: string) => {

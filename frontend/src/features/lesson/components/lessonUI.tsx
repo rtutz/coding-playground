@@ -7,6 +7,7 @@ import Terminal from "@/features/coding/components/terminal";
 import { useState } from "react";
 import RunButton from "@/features/coding/components/runButton";
 import { WSClient } from "@/lib/ws-client";
+import { Loader } from "@/components/loader";
 
 interface LessonProps {
     lessonId: string;
@@ -28,7 +29,7 @@ const Lesson: React.FC<LessonProps> = ({ lessonId, moduleId }) => {
 
     const [code, setCode] = useState<string>('');
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <Loader/>;
     if (error) return <div>Error...</div>;
 
     const handleRun = () => {

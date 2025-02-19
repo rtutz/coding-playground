@@ -8,6 +8,7 @@ import { useState } from "react";
 import RunButton from "@/features/coding/components/runButton";
 import { WSClient } from "@/lib/ws-client";
 import TestButton from "@/features/coding/components/testButton";
+import { Loader } from "@/components/loader";
 
 interface ProblemProps {
     lessonId: string;
@@ -28,8 +29,7 @@ const Problem: React.FC<ProblemProps> = ({ lessonId, moduleId }) => {
     }) as { data: problemType; isLoading: boolean; error: unknown };
 
     const [code, setCode] = useState<string>("");
-
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <Loader/>;
     if (error) return <div>Error...</div>;
 
     const handleRun = () => {
