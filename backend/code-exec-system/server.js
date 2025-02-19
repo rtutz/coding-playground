@@ -44,14 +44,29 @@ wss.on('connection', (ws) => {
       2. Terminal: This is for command/inputs that is directly executed on the
                 terminal like ls. This is also used for user inputs on a currently
                 running program.
+      3. Test: Passes in both the code and test cases. We write these in a file and run 
+                tester.py with these as arguments. It will print the result on ptyProcess 
+                which sends the data back to the websocket.
       */
       if (parsedMessage.type === "code") {
         compileCode(parsedMessage.data);
-        ptyProcess.write(`python3 ${currentWorkingDirectory}/${ws.id}.py\n`)
+        ptyProcess.write(`python3 ${currentWorkingDirectory}/${ws.id}.py\n`);
 
       } else if (parsedMessage.type === "terminal") {
         ptyProcess.write(parsedMessage.data + '\n');
-
+      } else if (parsedMessage.type === "test") {
+        const { code, testCases } = parsedMessage.data;
+        
+        // Save the code to a temporary Python file
+        fs.writeFileSync(`${ws.id}_test.py`, code, 'utf8');
+        
+        // Create a JSON file with the test cases
+        fs.writeFileSync(`${ws.id}_testcases.json`, JSON.stringify(testCases), 'utf8');
+        
+        // Run the tester script
+        const command = `python3 ${currentWorkingDirectory}/tester.py ${currentWorkingDirectory}/${ws.id}_test.py ${currentWorkingDirectory}/${ws.id}_testcases.json\n`;
+        
+        ptyProcess.write(command);
       }
     });
 
@@ -62,13 +77,22 @@ wss.on('connection', (ws) => {
     ws.on('close', () => {
         console.log('Client disconnected');
         // Delete the file for 
-        fs.unlink(`${ws.id}.py`, (err) => {
-          if (err) {
-            console.error(`Error deleting file: ${err}`);
-          } else {
-            console.log(`File ${ws.id}.py has been successfully deleted`);
-          }
+        const filesToDelete = [
+          `${ws.id}.py`,
+          `${ws.id}_test.py`,
+          `${ws.id}_testcases.json`
+        ];
+        
+        filesToDelete.forEach(file => {
+          fs.unlink(file, (err) => {
+            if (err) {
+              console.error(`Error deleting file ${file}: ${err}`);
+            } else {
+              console.log(`File ${file} has been successfully deleted`);
+            }
+          });
         });
+        
         
         ptyProcess.kill();
     });
