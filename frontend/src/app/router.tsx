@@ -1,4 +1,5 @@
 import { Loader } from "@/components/loader.tsx";
+import NotFoundPage from "@/components/not-found.tsx";
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
                 <ModulePage />
             </Suspense>
         ),
+    },
+    {
+        // Error boundary route
+        path: "*",
+        element: <NotFoundPage />,
     },
 ]);
 
