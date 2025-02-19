@@ -1,6 +1,6 @@
 import { Material } from '@/types/material';
 
-interface Option {
+export interface Option {
   content: string;
   isRight: boolean;
 }

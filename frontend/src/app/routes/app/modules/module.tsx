@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Lesson from "@/features/lesson/components/lessonUI";
 import Problem from "@/features/problem/components/problemUI";
+import { Quiz } from "@/features/quiz/components/quizUI";
 
 /* 
 Displays a specific module to the user. This module
@@ -81,7 +82,12 @@ export default function Module() {
                             />
                         );
                     case "quiz":
-                        return <div>Quiz</div>;
+                        return (
+                            <Quiz
+                                lessonId={currentMaterial._id}
+                                moduleId={moduleId!}
+                            />
+                        );
                     default:
                         return <div>DEFAULT</div>;
                 }
