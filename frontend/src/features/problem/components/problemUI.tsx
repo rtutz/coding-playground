@@ -1,5 +1,5 @@
 import { api } from "@/lib/api-client";
-import { Lesson as lessonType } from "../types/lesson";
+import { Problem as problemType } from "../types/problem";
 import { useQuery } from "@tanstack/react-query";
 import MarkdownPreview from "@/features/markdown/components/preview";
 import CodeEditor from "@/features/coding/components/editor";
@@ -7,26 +7,27 @@ import Terminal from "@/features/coding/components/terminal";
 import { useState } from "react";
 import RunButton from "@/features/coding/components/runButton";
 import { WSClient } from "@/lib/ws-client";
+import TestButton from "@/features/coding/components/testButton";
 
-interface LessonProps {
+interface ProblemProps {
     lessonId: string;
     moduleId: string;
 }
 
-const Lesson: React.FC<LessonProps> = ({ lessonId, moduleId }) => {
+const Problem: React.FC<ProblemProps> = ({ lessonId, moduleId }) => {
     const {
-        data: lessonData,
+        data: problemData,
         isLoading,
         error,
     } = useQuery({
-        queryKey: ["lessonsData"],
+        queryKey: ["problemData"],
         queryFn: () =>
             api
                 .get(`/modules/${moduleId}/materials/${lessonId}`)
                 .then((response) => response.data),
-    }) as { data: lessonType; isLoading: boolean; error: unknown };
+    }) as { data: problemType; isLoading: boolean; error: unknown };
 
-    const [code, setCode] = useState<string>('');
+    const [code, setCode] = useState<string>("");
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error...</div>;
@@ -35,16 +36,25 @@ const Lesson: React.FC<LessonProps> = ({ lessonId, moduleId }) => {
         WSClient.getInstance().sendCode(code);
     };
 
+    const handleTest = () => {
+        WSClient.getInstance().sendTest(code, problemData.testCases || []);
+    };
+
     return (
         <div className="flex flex-1 overflow-hidden">
             <div className="w-1/2 h-full py-6 bg-background text-foreground">
-                <MarkdownPreview content={lessonData.content} />
+                <MarkdownPreview content={problemData.content} />
             </div>
 
             <div className="w-1/2 flex flex-col">
                 <div className="h-1/2">
-                    <CodeEditor code={code} onCodeChange={code => setCode(code || '')} >
-                        <RunButton onClick={handleRun}/>
+                    <CodeEditor
+                        code={code}
+                        onCodeChange={(code) => setCode(code || "")}
+                    >
+                        <RunButton onClick={handleRun} />
+                        {problemData.testCases &&
+                            problemData.testCases.length > 0 && <TestButton onClick={handleTest}/>}
                     </CodeEditor>
                 </div>
 
@@ -56,4 +66,4 @@ const Lesson: React.FC<LessonProps> = ({ lessonId, moduleId }) => {
     );
 };
 
-export default Lesson;
+export default Problem;

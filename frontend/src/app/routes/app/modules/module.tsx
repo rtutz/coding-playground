@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Lesson from "@/features/lesson/components/lessonUI";
+import Problem from "@/features/problem/components/problemUI";
 
 /* 
 Displays a specific module to the user. This module
@@ -73,7 +74,12 @@ export default function Module() {
                             />
                         );
                     case "problem":
-                        return <div>Problem</div>;
+                        return (
+                            <Problem
+                                lessonId={currentMaterial._id}
+                                moduleId={moduleId!}
+                            />
+                        );
                     case "quiz":
                         return <div>Quiz</div>;
                     default:

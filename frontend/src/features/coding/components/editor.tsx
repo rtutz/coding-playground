@@ -1,27 +1,25 @@
-import React, { useState } from "react";
+import React, { ReactNode } from "react";
 import Editor from "@monaco-editor/react";
-import { Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { WSClient } from "@/lib/ws-client";
 
 interface CodeEditorProps {
-    defaultValue?: string;
+    code: string;
+    children?: ReactNode;
+    onCodeChange: (code: string | undefined) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
-    defaultValue = "// Type your code here",
+    code,
+    children,
+    onCodeChange
 }) => {
-    const [code, setCode] = useState(defaultValue);
-    const handleRun = (codeToRun: string) => {
-        WSClient.getInstance().sendCode(codeToRun);
-    };
+
     return (
         <div className="w-full h-full border dark:border-gray-700 relative">
             <Editor
                 height="100%"
                 defaultLanguage="python"
                 value={code}
-                onChange={(value) => setCode(value || "")}
+                onChange={onCodeChange}
                 theme="vs-dark"
                 options={{
                     minimap: { enabled: false },
@@ -32,14 +30,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                     readOnly: false,
                 }}
             />
-            <Button
-                onClick={() => handleRun(code)}
-                className="absolute top-2 right-6 bg-green-400"
-                variant="ghost"
-                size="icon"
-            >
-                <Play className="h-4 w-4" />
-            </Button>
+            {children}
         </div>
     );
 };

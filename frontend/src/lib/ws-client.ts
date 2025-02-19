@@ -41,9 +41,29 @@ export class WSClient {
     this.ws.send(message);
   }
 
+  public sendTest(code: string, testCases: TestCase[]): void {
+    const formattedTestCases = testCases.map(testCase => [testCase.input, testCase.expectedOutput]);
+  
+    const message = JSON.stringify({
+      type: 'test',
+      data: {
+        code: code,
+        testCases: formattedTestCases
+      }
+    });
+  
+    this.ws.send(message);
+  }
+
   public getWebSocket(): WebSocket {
     return this.ws;
   }
+}
+
+/* LOOKINTO: Temporary fix as I cannot import Testcase from the features folder */
+interface TestCase {
+  input: string;
+  expectedOutput: string;
 }
 
 // Export the WebSocket instance
