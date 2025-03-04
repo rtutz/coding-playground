@@ -3,8 +3,8 @@ export class WSClient {
   private ws: WebSocket;
 
   private constructor() {
-    if (process.env.WS_URL) {
-      this.ws = new WebSocket(process.env.WS_URL);
+    if (import.meta.env.VITE_WS_URL) {
+      this.ws = new WebSocket(import.meta.env.VITE_WS_URL);
     } else {
       throw new Error('WebSocket URL is not defined in environment variables');
     }
