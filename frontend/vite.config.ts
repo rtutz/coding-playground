@@ -6,6 +6,9 @@ import path from "path"
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    allowedHosts: ['coding.0000109.xyz']
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
