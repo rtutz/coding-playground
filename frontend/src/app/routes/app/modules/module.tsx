@@ -2,7 +2,7 @@ import ModuleDashboard from "@/components/moduleDashboard";
 import { api } from "@/lib/api-client";
 import { Material } from "@/types/material";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Lesson from "@/features/lesson/components/lessonUI";
 import Problem from "@/features/problem/components/problemUI";
@@ -26,13 +26,16 @@ export default function Module() {
         moduleId: string;
         materialId?: string;
     }>();
+    const [currentMaterial, setCurrentMaterial] = useState<
+        Material | undefined
+    >();
 
     const {
         data: materials,
         isLoading,
         error,
     } = useQuery({
-        queryKey: ["materials"],
+        queryKey: ["materials", moduleId],
         queryFn: () =>
             api
                 .get(`/modules/${moduleId}/materials`)
@@ -47,16 +50,19 @@ export default function Module() {
         }
     }, [materials, moduleId, materialId, navigate]);
 
+    useEffect(() => {
+        const material = materials?.find((m) => m._id === materialId);
+        setCurrentMaterial(material);
+    }, [materials, materialId]);
+
     // TODO: Make a separate component for these
-    if (isLoading) return <Loader/>;
+    if (isLoading) return <Loader />;
     if (error) return <div>Error...</div>;
     if (!materials || materials.length == 0) return <div>No materials</div>;
 
     const onMaterialChange = (materialId: string) => {
         navigate(`/modules/${moduleId}/${materialId}`);
     };
-
-    const currentMaterial = materials.find((m) => m._id === materialId);
 
     if (!currentMaterial) return <div>Invalid material</div>;
     return (
@@ -71,6 +77,7 @@ export default function Module() {
                     case "lesson":
                         return (
                             <Lesson
+                                key={materialId}
                                 lessonId={currentMaterial._id}
                                 moduleId={moduleId!}
                             />
@@ -78,6 +85,7 @@ export default function Module() {
                     case "problem":
                         return (
                             <Problem
+                                key={materialId}
                                 lessonId={currentMaterial._id}
                                 moduleId={moduleId!}
                             />
@@ -85,6 +93,7 @@ export default function Module() {
                     case "quiz":
                         return (
                             <Quiz
+                                key={materialId}
                                 lessonId={currentMaterial._id}
                                 moduleId={moduleId!}
                             />

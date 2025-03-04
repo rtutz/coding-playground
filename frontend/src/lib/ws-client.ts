@@ -3,7 +3,11 @@ export class WSClient {
   private ws: WebSocket;
 
   private constructor() {
-    this.ws = new WebSocket('ws://localhost:8080');
+    if (process.env.WS_URL) {
+      this.ws = new WebSocket(process.env.WS_URL);
+    } else {
+      throw new Error('WebSocket URL is not defined in environment variables');
+    }
 
     this.ws.onopen = () => {
       console.log('WebSocket connection established');

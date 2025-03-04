@@ -10,8 +10,7 @@ class ApiClient {
 
   private constructor() {
     this.axiosInstance = axios.create({
-        baseURL: 'http://localhost:3000/',
-    //   baseURL: process.env.API_URL,
+      baseURL: import.meta.env.VITE_API_URL,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -26,6 +25,7 @@ class ApiClient {
   }
 
   public get<T>(url: string, config = {}) {
+    console.log(`${import.meta.env.VITE_API_URL}/${url}`);
     return this.axiosInstance.get<T>(url, config);
   }
 
