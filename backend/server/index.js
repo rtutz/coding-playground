@@ -144,6 +144,20 @@ app.delete('/modules', async (req, res) => {
     }
 });
 
+app.delete('/module/:id', async (req, res) => {
+    try {
+        const moduleId = req.params.id;
+        const result = await Module.findByIdAndDelete(moduleId);
+        
+        if (!result) {
+            return res.status(404).json({ message: "Module not found" });
+        }
+        
+        res.status(200).json({ message: "Module successfully deleted", deletedModule: result });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting module", error: error.message });
+    }
+});
 
 // Start the server
 app.listen(PORT, () => {
