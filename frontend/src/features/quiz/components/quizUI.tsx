@@ -1,12 +1,17 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Quiz as quizType, Option as optionType } from "@/features/quiz/types/quiz";
+import {
+    Quiz as quizType,
+    Option as optionType,
+} from "@/features/quiz/types/quiz";
 import { api } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@/components/loader";
+import { CheckCircle, XCircle } from "lucide-react";
+import MarkdownPreview from "@/features/markdown/components/preview";
 
 interface QuizProps {
     lessonId: string;
@@ -29,7 +34,7 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    if (isLoading) return <Loader/>;
+    if (isLoading) return <Loader />;
     if (error) return <div>Error...</div>;
 
     const handleOptionChange = (value: string) => {
@@ -42,56 +47,71 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
 
     const getOptionClass = (option: optionType) => {
         if (!isSubmitted) return "hover:bg-gray-700";
-        if (option.isRight) return "bg-green-500/20 border border-green-500 text-green-300";
-        if (option.content === selectedOption && !option.isRight) 
-          return "bg-red-500/20 border border-red-500 text-red-300";
+        if (option.isRight)
+            return "bg-green-500/20 border border-green-500 text-green-300";
+        if (option.content === selectedOption && !option.isRight)
+            return "bg-red-500/20 border border-red-500 text-red-300";
         return "border border-gray-600";
-      };
-    
-      return (
+    };
+
+    return (
         <div className="h-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
-          <Card className="w-full max-w-2xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800">
-            <CardHeader>
-              <CardTitle className="text-3xl font-semibold text-center text-gray-900 dark:text-white">
-                {quizData.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-lg mb-6 text-center text-gray-700 dark:text-gray-300">
-                {quizData.content}
-              </p>
-              <RadioGroup onValueChange={handleOptionChange} disabled={isSubmitted}>
-                {quizData.options.map((option, index) => (
-                  <div
-                    key={index}
-                    className={`mb-4 p-4 rounded-lg transition-all duration-300 ${getOptionClass(option)}`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value={option.content} id={`option-${index}`} />
-                      <Label htmlFor={`option-${index}`} className="flex-grow cursor-pointer text-lg">
-                        {option.content}
-                      </Label>
-                      {isSubmitted && option.isRight && (
-                        <span className="text-green-500 text-xl font-bold">✓</span>
-                      )}
-                      {isSubmitted && option.content === selectedOption && !option.isRight && (
-                        <span className="text-red-500 text-xl font-bold">✗</span>
-                      )}
+            <Card className="w-full max-w-3xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800">
+                <CardHeader className="text-xl">
+                    <MarkdownPreview
+                        content={quizData.content}
+                    />
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    
+                    <RadioGroup
+                        onValueChange={handleOptionChange}
+                        disabled={isSubmitted}
+                        className="space-y-4"
+                    >
+                        {quizData.options.map((option, index) => (
+                            <div
+                                key={index}
+                                className={`p-4 rounded-lg transition-all duration-300 ${getOptionClass(
+                                    option
+                                )}`}
+                            >
+                                <div className="flex items-center space-x-3">
+                                    <RadioGroupItem
+                                        value={option.content}
+                                        id={`option-${index}`}
+                                    />
+                                    <Label
+                                        htmlFor={`option-${index}`}
+                                        className="flex-grow cursor-pointer text-lg text-gray-800 dark:text-gray-200"
+                                    >
+                                        <MarkdownPreview
+                                            content={option.content}
+                                        />
+                                    </Label>
+                                    {isSubmitted && option.isRight && (
+                                        <CheckCircle className="text-green-500 h-6 w-6" />
+                                    )}
+                                    {isSubmitted &&
+                                        option.content === selectedOption &&
+                                        !option.isRight && (
+                                            <XCircle className="text-red-500 h-6 w-6" />
+                                        )}
+                                </div>
+                            </div>
+                        ))}
+                    </RadioGroup>
+                    <div className="flex justify-center">
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={!selectedOption || isSubmitted}
+                            className="px-6 py-3 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transition-all"
+                        >
+                            {isSubmitted ? "Submitted" : "Submit Answer"}
+                        </Button>
                     </div>
-                  </div>
-                ))}
-              </RadioGroup>
-              <div className="mt-6 flex justify-center">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={!selectedOption || isSubmitted}
-                  className="px-6 py-2 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transition-all"
-                >
-                  {isSubmitted ? "Submitted" : "Submit Answer"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+            </Card>
         </div>
-      );
+    );
 };
