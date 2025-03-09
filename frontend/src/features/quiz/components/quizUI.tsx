@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import MarkdownEditor from "@uiw/react-markdown-editor";
 import {
     Quiz as quizType,
     Option as optionType,
@@ -11,7 +12,7 @@ import { api } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "@/components/loader";
 import { CheckCircle, XCircle } from "lucide-react";
-import MarkdownPreview from "@/features/markdown/components/preview";
+// import MarkdownPreview from "@/features/markdown/components/preview";
 
 interface QuizProps {
     lessonId: string;
@@ -46,24 +47,24 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
     };
 
     const getOptionClass = (option: optionType) => {
-        if (!isSubmitted) return "hover:bg-gray-700";
+        if (!isSubmitted) return "hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors";
         if (option.isRight)
-            return "bg-green-500/20 border border-green-500 text-green-300";
+            return "bg-green-500/20 border border-green-500 text-green-600 dark:text-green-300";
         if (option.content === selectedOption && !option.isRight)
-            return "bg-red-500/20 border border-red-500 text-red-300";
-        return "border border-gray-600";
+            return "bg-red-500/20 border border-red-500 text-red-600 dark:text-red-300";
+        return "border border-gray-300 dark:border-gray-600";
     };
-
+    
     return (
-        <div className="h-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
-            <Card className="w-full max-w-3xl shadow-2xl rounded-2xl bg-white dark:bg-gray-800">
-                <CardHeader className="text-xl">
-                    <MarkdownPreview
-                        content={quizData.content}
+        <div className=" flex items-center justify-center  p-6">
+            <Card className="w-full max-w-3xl shadow-xl rounded-2xl">
+                <CardHeader className="text-xl font-semibold bg-markdown">
+                    <MarkdownEditor.Markdown
+                        source={quizData.content}
+                        className="prose dark:prose-invert"
                     />
                 </CardHeader>
-                <CardContent className="space-y-6">
-                    
+                <CardContent className="space-y-6 bg-markdown">
                     <RadioGroup
                         onValueChange={handleOptionChange}
                         disabled={isSubmitted}
@@ -83,10 +84,11 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
                                     />
                                     <Label
                                         htmlFor={`option-${index}`}
-                                        className="flex-grow cursor-pointer text-lg text-gray-800 dark:text-gray-200"
+                                        className="flex-grow cursor-pointer text-lg text-gray-900 dark:text-gray-100"
                                     >
-                                        <MarkdownPreview
-                                            content={option.content}
+                                        <MarkdownEditor.Markdown
+                                            source={option.content}
+                                            className="prose dark:prose-invert"
                                         />
                                     </Label>
                                     {isSubmitted && option.isRight && (
@@ -105,7 +107,7 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
                         <Button
                             onClick={handleSubmit}
                             disabled={!selectedOption || isSubmitted}
-                            className="px-6 py-3 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transition-all"
+                            className="px-6 py-3 text-lg font-medium rounded-xl shadow-md hover:shadow-lg transition-all bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
                         >
                             {isSubmitted ? "Submitted" : "Submit Answer"}
                         </Button>
@@ -114,4 +116,5 @@ export const Quiz: React.FC<QuizProps> = ({ lessonId, moduleId }) => {
             </Card>
         </div>
     );
+    
 };

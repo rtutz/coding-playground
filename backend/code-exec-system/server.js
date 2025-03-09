@@ -50,7 +50,7 @@ wss.on('connection', (ws) => {
       */
       if (parsedMessage.type === "code") {
         compileCode(parsedMessage.data);
-        ptyProcess.write(`timeout 5s python3 ${currentWorkingDirectory}/${ws.id}.py\n`);
+        ptyProcess.write(`python3 ${currentWorkingDirectory}/${ws.id}.py\n`);
 
       } else if (parsedMessage.type === "terminal") {
         ptyProcess.write(parsedMessage.data + '\n');

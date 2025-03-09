@@ -103,9 +103,66 @@ This endpoint creates a new module and saves it to the database.
 */
 app.post('/modules', async (req, res) => {
     try {
-        const newModule = new Module(req.body);
+        const { title, subtitle } = req.body;
+        const newModule = new Module({
+            title,
+            subtitle,
+            materials: []
+        });
         const savedModule = await newModule.save();
         res.status(201).json(savedModule);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+app.post('/modules/:moduleId/materials', async (req, res) => {
+    try {
+        const { moduleId } = req.params;
+        const { type, title } = req.body;
+
+        // Find the module by ID
+        const module = await Module.findById(moduleId);
+
+        if (!module) {
+            return res.status(404).json({ message: 'Module not found' });
+        }
+
+        // Create a new material
+        const newMaterial = {
+            type,
+            title,
+            // Add any other fields you need for a material
+            content: ' ',
+            ...(type === 'quiz' && { 
+                options: [
+                    {
+                        content: '',
+                        is_right: false
+                    },
+                    {
+                        content: '',
+                        is_right: false
+                    },
+                    {
+                        content: '',
+                        is_right: false
+                    },
+                    {
+                        content: '',
+                        is_right: false
+                    }
+                ]
+            })
+        };
+        
+        // Add the new material to the module's materials array
+        module.materials.push(newMaterial);
+
+        // Save the updated module
+        const updatedModule = await module.save();
+
+        res.status(201).json(updatedModule);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -118,19 +175,19 @@ app.post('/modules', async (req, res) => {
 /* 
 This endpoint creates a new material for a specific module defined.
 */
-app.post('/modules/:id/materials', async (req, res) => {
-    try {
-        const module = await Module.findById(req.params.id);
-        if (!module) {
-            return res.status(404).json({ message: 'Module not found' });
-        }
-        module.materials.push(req.body);
-        const updatedModule = await module.save();
-        res.status(201).json(updatedModule);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
+// app.post('/modules/:id/materials', async (req, res) => {
+//     try {
+//         const module = await Module.findById(req.params.id);
+//         if (!module) {
+//             return res.status(404).json({ message: 'Module not found' });
+//         }
+//         module.materials.push(req.body);
+//         const updatedModule = await module.save();
+//         res.status(201).json(updatedModule);
+//     } catch (error) {
+//         res.status(400).json({ message: error.message });
+//     }
+// });
 
 app.delete('/modules', async (req, res) => {
     try {
@@ -158,6 +215,73 @@ app.delete('/module/:id', async (req, res) => {
         res.status(500).json({ message: "Error deleting module", error: error.message });
     }
 });
+
+app.delete('/modules/:moduleId/materials/:materialId', async (req, res) => {
+    try {
+        const { moduleId, materialId } = req.params;
+        const module = await Module.findById(moduleId);
+
+        if (!module) {
+            return res.status(404).json({ message: "Module not found" });
+        }
+
+        // Remove material from module's materials array
+        module.materials = module.materials.filter(
+            (mat) => mat._id.toString() !== materialId
+        );
+
+        await module.save();
+
+        res.status(200).json({ message: "Material successfully deleted" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting material", error: error.message });
+    }
+});
+
+
+// Update the contents of materialId
+app.put('/modules/:moduleId/materials/:materialId', async (req, res) => {
+    try {
+        const module = await Module.findById(req.params.moduleId);
+        if (!module) {
+            return res.status(404).json({ message: 'Module not found' });
+        }
+
+        const lesson = module.materials.id(req.params.materialId);
+        if (!lesson) {
+            return res.status(404).json({ message: 'Lesson not found' });
+        }
+
+        lesson.content = req.body.content;
+        const updatedModule = await module.save();
+
+        res.status(200).json(lesson);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+
+app.put('/modules/:moduleId/materials/quiz/:materialId', async (req, res) => {
+    try {
+        const module = await Module.findById(req.params.moduleId);
+        if (!module) return res.status(404).json({ message: 'Module not found' });
+
+        const lesson = module.materials.id(req.params.materialId);
+        if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
+
+        // Update all relevant quiz fields
+        lesson.content = req.body.content;
+        lesson.options = req.body.options; // Add this line
+        const updatedModule = await module.save();
+
+        res.status(200).json(lesson);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {

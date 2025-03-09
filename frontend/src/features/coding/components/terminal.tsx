@@ -51,7 +51,26 @@ const Terminal: React.FC = () => {
             instance.write(event.data); // Ensure new lines are properly handled
         }
     };
-    return <div ref={ref} className="h-1/2 w-full" />;
-};
+
+    // Function to handle the "Clear" button click
+    const handleClear = () => {
+        if (instance) {
+            instance.write("\r\n");
+            wsClient.sendTerminalCommand("clear"); // Send the clear command to the terminal
+        }
+    };
+    return (
+        <div className="relative h-1/2 w-full">
+            {/* Button positioned at the top-right */}
+            <button
+                onClick={handleClear}
+                className="absolute top-2 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 z-10"
+            >
+                Clear
+            </button>
+            {/* Terminal */}
+            <div ref={ref} className="w-full h-full" />
+        </div>
+    );};
 
 export default Terminal;

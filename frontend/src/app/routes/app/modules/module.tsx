@@ -8,7 +8,9 @@ import Lesson from "@/features/lesson/components/lessonUI";
 import Problem from "@/features/problem/components/problemUI";
 import { Quiz } from "@/features/quiz/components/quizUI";
 import { Loader } from "@/components/loader";
-
+import { useUserRole } from "@/hooks/useUserRole";
+import LessonTeacher from "@/features/lesson/components/lessonTeacherUI";
+import { QuizTeacher } from "@/features/quiz/components/quizTeacher";
 /* 
 Displays a specific module to the user. This module
 should interact with all 3 types of problems. The 
@@ -29,6 +31,7 @@ export default function Module() {
     const [currentMaterial, setCurrentMaterial] = useState<
         Material | undefined
     >();
+    const userRole = useUserRole();
 
     const {
         data: materials,
@@ -46,6 +49,7 @@ export default function Module() {
         if (materials && materials.length > 0) {
             if (!materialId || !materials.some((m) => m._id === materialId)) {
                 navigate(`/modules/${moduleId}/${materials[0]._id}`);
+                navigate(0); // Ensure it reloads
             }
         }
     }, [materials, moduleId, materialId, navigate]);
@@ -62,11 +66,13 @@ export default function Module() {
 
     const onMaterialChange = (materialId: string) => {
         navigate(`/modules/${moduleId}/${materialId}`);
+        navigate(0);
     };
 
     if (!currentMaterial) return <div>Invalid material</div>;
     return (
-        <div className="h-screen flex flex-col">
+        // <div className="h-screen flex flex-col">
+        <div>
             <ModuleDashboard
                 materials={materials}
                 currentMaterialId={materialId!}
@@ -75,34 +81,63 @@ export default function Module() {
             {(() => {
                 switch (currentMaterial?.type) {
                     case "lesson":
-                        return (
-                            <Lesson
-                                key={materialId}
-                                lessonId={currentMaterial._id}
-                                moduleId={moduleId!}
-                            />
-                        );
+                        if (userRole === "teacher") {
+                            return (
+                                <LessonTeacher
+                                    key={materialId}
+                                    lessonId={currentMaterial._id}
+                                    moduleId={moduleId!}
+                                />
+                            );
+                        } else {
+                            return (
+                                <Lesson
+                                    key={materialId}
+                                    lessonId={currentMaterial._id}
+                                    moduleId={moduleId!}
+                                />
+                            );
+                        }
                     case "problem":
-                        return (
-                            <Problem
-                                key={materialId}
-                                lessonId={currentMaterial._id}
-                                moduleId={moduleId!}
-                            />
-                        );
+                        if (userRole === "teacher") {
+                            return (
+                                <LessonTeacher
+                                    key={materialId}
+                                    lessonId={currentMaterial._id}
+                                    moduleId={moduleId!}
+                                />
+                            );
+                        } else {
+                            return (
+                                <Problem
+                                    key={materialId}
+                                    lessonId={currentMaterial._id}
+                                    moduleId={moduleId!}
+                                />
+                            );
+                        }
                     case "quiz":
-                        return (
-                            <Quiz
-                                key={materialId}
-                                lessonId={currentMaterial._id}
-                                moduleId={moduleId!}
-                            />
-                        );
+                        if (userRole === "teacher") {
+                            return (
+                                <QuizTeacher
+                                    key={materialId}
+                                    lessonId={currentMaterial._id}
+                                    moduleId={moduleId!}
+                                />
+                            );
+                        } else {
+                            return (
+                                <Quiz
+                                    key={materialId}
+                                    lessonId={currentMaterial._id}
+                                    moduleId={moduleId!}
+                                />
+                            );
+                        }
                     default:
                         return <div>DEFAULT</div>;
                 }
             })()}
-            {/* </div> */}
         </div>
     );
 }
